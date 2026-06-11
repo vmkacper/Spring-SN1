@@ -76,4 +76,27 @@ public class EmployeeController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
+    @PutMapping("{empId}")
+    public ResponseEntity updateEmployee(@PathVariable Long empId,
+                                         @RequestBody EmployeeDto employeeDto) {
+        Optional<Employee> currentEmployee = employeeRepository.findById(empId);
+        if (currentEmployee.isPresent()){
+            employeeDto.setId(empId);
+            Employee entity = convertToEntity(employeeDto);
+            employeeRepository.save(entity);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        }else{
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{empId}")
+    public ResponseEntity deleteEmployee(@PathVariable Long empId) {
+        if(employeeRepository.existsById(empId)){
+            employeeRepository.deleteById(empId);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        }else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
 }
